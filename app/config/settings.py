@@ -1,5 +1,4 @@
-from pydantic import BaseSettings
-
+from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     APP_NAME: str
     ENV: str
@@ -15,6 +14,9 @@ class Settings(BaseSettings):
     COOKIE_SAMESITE: str
 
     DATABASE_URL: str
+    
+    REDIS_HOST: str
+    REDIS_PORT: int
 
     CELERY_BROKER_URL: str
     CELERY_RESULT_BACKEND: str

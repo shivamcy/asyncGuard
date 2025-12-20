@@ -1,0 +1,44 @@
+# -----------------------------
+# FastAPI & Server
+# -----------------------------
+fastapi
+uvicorn[standard]
+
+# -----------------------------
+# Configuration & Env
+# -----------------------------
+python-dotenv
+pydantic
+pydantic-settings
+
+# -----------------------------
+# Authentication & Security
+# -----------------------------
+python-jose[cryptography]
+passlib[bcrypt]
+
+# -----------------------------
+# Database (PostgreSQL + Async)
+# -----------------------------
+sqlalchemy
+asyncpg
+psycopg2-binary
+alembic
+
+# -----------------------------
+# Background Tasks
+# -----------------------------
+celery
+redis
+
+# -----------------------------
+# HTTP & Utilities
+# -----------------------------
+requests
+httpx
+
+# -----------------------------
+# Logging & Utilities
+# -----------------------------
+loguru
+python-multipart

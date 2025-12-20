@@ -5,6 +5,11 @@ venv/
 # Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Alembic cache
+alembic/__pycache__/
 
 # IDE / OS
 .vscode/
@@ -13,3 +18,11 @@ __pycache__/
 
 # Logs
 *.log
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Test cache
+.pytest_cache/
