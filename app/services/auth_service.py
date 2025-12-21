@@ -3,7 +3,9 @@ from sqlalchemy import select
 from fastapi import HTTPException, status
 
 from app.models.user import User, UserRole
-from app.schemas.auth import SignupRequest, SignupResponse
+from app.schemas.auth import SignupRequest, SignupResponse, LoginRequest, LoginResponse
+from app.helpers.jwt import create_access_token
+from app.helpers.hashing import verify_password
 from app.helpers.hashing import hash_password
 
 class AuthService:
@@ -29,5 +31,20 @@ class AuthService:
             org_id=user.org_id
             
         )
-    
+    @staticmethod
+    async def login(data:LoginRequest , db :AsyncSession)->LoginResponse:
+        result = await db.execute(select(User).where(User.email==data.email))
+        user = result.scalar_one_or_none()
+        if not user or not verify_password(data.password, user.hashed_password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        
+        access_token = create_access_token(data={"sub": user.email, "user_id": user.id, "role": user.role.value})
+        
+        return LoginResponse(
+            access_token=access_token,
+            user_id=user.id,
+            email=user.email,
+            role=user.role.value,
+            org_id=user.org_id
+        )
         
