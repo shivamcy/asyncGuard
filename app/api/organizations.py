@@ -12,3 +12,8 @@ router = APIRouter(prefix="/organizations", tags=["Organization"])
 @router.post("/create",response_model=OrgResponseModel,status_code=status.HTTP_201_CREATED)
 async def create_org(data:OrgRequestModel, db:AsyncSession=Depends(get_db), user : User =Depends(get_current_user)):
     return await OrgService.create_org(data,user,db)
+
+
+@router.delete("/delete",status_code=status.HTTP_200_OK)
+async def delete_org(db:AsyncSession=Depends(get_db), user : User =Depends(get_current_user)):
+    return await OrgService.delete_org(user,db)

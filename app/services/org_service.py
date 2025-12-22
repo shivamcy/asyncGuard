@@ -32,5 +32,25 @@ class OrgService:
             id=org.id,
             name=org.name,
         )
-            
-               
+    @staticmethod
+    async def delete_org(user : User, db:AsyncSession):
+        if user.org_id is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="User does not belong to any organization")
+        if user.role != UserRole.admin:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Only admins can delete the organization")
+        result = await db.execute(select(Organization).where(Organization.id==user.org_id))
+        org = result.scalar_one_or_none()
+        if not org:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Organization not found")
+        users_in_org = await db.execute(select(User).where(User.org_id==org.id))
+        users = users_in_org.scalars().all()
+        for u in users:
+            u.org_id = None
+            u.role = UserRole.viewer
+        await db.delete(org)
+        await db.commit()
+        return {
+            "detail":"Organization deleted successfully",
+            "org_name" : org.name,
+            "deleted_by" : user.email
+            }
