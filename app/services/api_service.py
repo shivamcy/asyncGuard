@@ -2,13 +2,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException, status, Response
 
-from app.schemas.api import apiRequestModel , apiResponseModel
+from app.schemas.api import ApiRequestModel, ApiResponseModel, DeleteApiResponseModel
 from app.models.user import User, UserRole
 from app.models.api_endpoint import ApiEndpoints
 
 class ApiService:
     @staticmethod
-    async def create_api(data: apiRequestModel, user: User, db: AsyncSession) -> apiResponseModel:
+    async def create_api(data: ApiRequestModel, user: User, db: AsyncSession) -> ApiResponseModel:
         if user.org_id is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User does not belong to any organization")
         if user.role != UserRole.admin:
@@ -30,7 +30,7 @@ class ApiService:
         await db.flush()
         await db.commit()
         await db.refresh(api)
-        return apiResponseModel(
+        return ApiResponseModel(
             id=api.id,
             name=api.name,
             org_id=api.org_id,
@@ -50,20 +50,20 @@ class ApiService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="API not found")
         await db.delete(api)
         await db.commit()
-        return {
-            "detail": "API deleted successfully",
-            "api_name": api.name,
-            "api_url": api.url,
-            "deleted_by": user.email
-        }
+        return DeleteApiResponseModel(
+            message= "API deleted successfully",
+            api_name= api.name,
+            api_url= api.url,
+            deleted_by= user.email
+        )
     @staticmethod
-    async def list_apis(db: AsyncSession, user: User) -> list[apiResponseModel]:
+    async def list_apis(db: AsyncSession, user: User) -> list[ApiResponseModel]:
         if user.org_id is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User does not belong to any organization")
         result = await db.execute(select(ApiEndpoints).where(ApiEndpoints.is_active==True, ApiEndpoints.org_id == user.org_id) ) 
         apis = result.scalars().all()
         return [
-            apiResponseModel(
+            ApiResponseModel(
                 id=api.id,
                 name=api.name,
                 url=api.url,

@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 from datetime import datetime
-class apiRequestModel(BaseModel):
+class ApiRequestModel(BaseModel):
     name: str
     #description: str
     url: str
-class apiResponseModel(BaseModel):
+class ApiResponseModel(BaseModel):
     id: int
     name: str
     #description: str
@@ -15,6 +15,11 @@ class apiResponseModel(BaseModel):
 
     class Config:
         from_attributes = True
+class DeleteApiResponseModel(BaseModel):
+    message: str
+    api_name: str
+    api_url: str
+    deleted_by: str
 
 
 #discuss : should we add description field here?

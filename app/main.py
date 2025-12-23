@@ -5,6 +5,7 @@ from app.api import auth
 from app.api import organizations
 from app.config.settings import settings
 from app.api import apis
+from app.api import user
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -25,6 +26,7 @@ def create_app() -> FastAPI:
     app.include_router(auth.router)
     app.include_router(organizations.router)
     app.include_router(apis.router)
+    app.include_router(user.router)
 
     # Health Check 
     @app.get("/health", tags=["Health"])
