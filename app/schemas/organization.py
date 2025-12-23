@@ -11,6 +11,4 @@ class DelOrgResponseModel(BaseModel):
     class Config:
         from_attributes = True
 class OrgJoinRequestModel(BaseModel):
-    id: int
     organization_id: int
-    user_id: int

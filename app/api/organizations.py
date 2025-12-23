@@ -21,3 +21,11 @@ async def delete_org(db:AsyncSession=Depends(get_db), user : User =Depends(get_c
 @router.post("/join", status_code=status.HTTP_200_OK)
 async def join_org(data:OrgJoinRequestModel, db:AsyncSession=Depends(get_db), user : User =Depends(get_current_user)):
     return await OrgService.join_org(data,user,db)
+
+@router.post("/leave", status_code=status.HTTP_200_OK)
+async def leave_org( db:AsyncSession=Depends(get_db), user : User =Depends(get_current_user)):
+    return await OrgService.leave_org(user,db)  
+
+@router.post("/remove_user", status_code=status.HTTP_200_OK)
+async def remove_user_from_org(user_id:int, db:AsyncSession=Depends(get_db), user : User =Depends(get_current_user)):
+    return await OrgService.remove_user_from_org(user_id,user,db)

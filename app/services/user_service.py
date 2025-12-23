@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.schemas.user import UserRoleUpdateModel, UserResponseModel
+from app.helpers.user import verify_role
 class UserService:
     @staticmethod
     async def upgrade_user_role(user_id: int, data: UserRoleUpdateModel, current_user: User, db: AsyncSession) -> UserResponseModel:
@@ -13,6 +14,7 @@ class UserService:
         user = result.scalars().first()
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        verify_role(data.new_role)
         user.role = data.new_role
         await db.commit()
         await db.refresh(user)

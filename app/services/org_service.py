@@ -59,3 +59,38 @@ class OrgService:
             org_name = org.name,
             deleted_by = user.email
             )
+    @staticmethod
+    async def join_org(data:OrgJoinRequestModel ,user : User, db:AsyncSession):
+        if user.org_id is not None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="User already belongs to an organization")
+        result = await db.execute(select(Organization).where(Organization.id==data.organization_id))
+        org = result.scalar_one_or_none()
+        if not org:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Organization not found")
+        user.org_id = org.id
+        user.role = UserRole.viewer
+        await db.commit()
+        return Response(content=f"User {user.email} joined organization {org.name} successfully",status_code=status.HTTP_200_OK)
+    @staticmethod
+    async def leave_org(user : User, db:AsyncSession):
+        if user.org_id is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="User does not belong to any organization")
+        if user.role == UserRole.admin:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Admins cannot leave the organization. Please delete the organization instead.")
+        user.org_id = None
+        user.role = UserRole.viewer
+        await db.commit()
+        return Response(content=f"User {user.email} left the organization successfully",status_code=status.HTTP_200_OK)
+    @staticmethod
+    async def remove_user_from_org(user_id:int , admin_user : User, db:AsyncSession):
+        if admin_user.role != UserRole.admin:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Only admins can remove users from the organization")
+        result = await db.execute(select(User).where(User.id==user_id , User.org_id==admin_user.org_id))
+        user_to_remove = result.scalar_one_or_none()
+        if not user_to_remove:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found in the organization")
+        user_to_remove.org_id = None
+        user_to_remove.role = UserRole.viewer
+        await db.commit()
+        return Response(content=f"User {user_to_remove.email} removed from the organization successfully",status_code=status.HTTP_200_OK)
+    
