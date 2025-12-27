@@ -26,3 +26,8 @@ dist/
 
 # Test cache
 .pytest_cache/
+
+# Celery
+celerybeat-schedule
+celerybeat-schedule.db
+
