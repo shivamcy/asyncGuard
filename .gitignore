@@ -31,3 +31,6 @@ dist/
 celerybeat-schedule
 celerybeat-schedule.db
 
+# Redis
+dump.rdb
+
