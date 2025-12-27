@@ -1,0 +1,26 @@
+from celery import Celery
+from celery.schedules import crontab
+from app.config.settings import settings
+
+celery_app = Celery(
+    "asyncGuard",
+    broker=settings.CELERY_BROKER_URL,
+    backend=settings.CELERY_RESULT_BACKEND,
+)
+
+celery_app.conf.update(
+    task_serializer="json",
+    result_serializer="json",
+    accept_content=["json"],
+    timezone="UTC",
+    enable_utc=True,
+)
+
+import app.workers.audit_tasks 
+
+celery_app.conf.beat_schedule = {
+    "run-all-audits-hourly": {
+        "task": "app.workers.audit_tasks.run_all_audits",
+        "schedule": crontab(minute=0),
+    }
+}

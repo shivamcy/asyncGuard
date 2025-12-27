@@ -6,6 +6,7 @@ from app.api import organizations
 from app.config.settings import settings
 from app.api import apis
 from app.api import user
+from app.api import audits
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -27,6 +28,7 @@ def create_app() -> FastAPI:
     app.include_router(organizations.router)
     app.include_router(apis.router)
     app.include_router(user.router)
+    app.include_router(audits.router)
 
     # Health Check 
     @app.get("/health", tags=["Health"])
@@ -34,6 +36,4 @@ def create_app() -> FastAPI:
         return {"status": "ok"}
 
     return app
-
-
 app = create_app()
