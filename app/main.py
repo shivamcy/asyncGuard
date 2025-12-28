@@ -6,7 +6,7 @@ from app.api import organizations
 from app.config.settings import settings
 from app.api import apis
 from app.api import user
-from app.api import audits
+#from app.api import audits
 from app.api import reports
 
 def create_app() -> FastAPI:
@@ -29,7 +29,7 @@ def create_app() -> FastAPI:
     app.include_router(organizations.router)
     app.include_router(apis.router)
     app.include_router(user.router)
-    app.include_router(audits.router)
+   # app.include_router(audits.router)
     app.include_router(reports.router)
 
     # Health Check 

@@ -3,11 +3,11 @@ from app.models.audit_result import AuditResult
 
 class AuditRunner:
     @staticmethod
-    async def run(api, audit_run, db):
+    def run(api, audit_run, db):
         score = 100
 
         for check in CHECK_REGISTRY:
-            result = await check.execute(api)
+            result = check.execute(api)
 
             if not result["passed"]:
                 score -= 20
@@ -23,4 +23,4 @@ class AuditRunner:
             )
 
         audit_run.score = max(score, 0)
-        await db.commit()
+        db.commit()

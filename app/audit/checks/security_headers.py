@@ -12,9 +12,8 @@ class SecurityHeadersCheck(BaseCheck):
     name = "security_headers"
     severity = "medium"
 
-    async def execute(self, api):
-        async with httpx.AsyncClient(timeout=5) as client:
-            response = await client.get(api.url)
+    def execute(self, api):
+        response = httpx.get(api.url, timeout=5)
 
         headers = {k.lower(): v for k, v in response.headers.items()}
         missing = [h for h in REQUIRED_HEADERS if h not in headers]
@@ -22,14 +21,10 @@ class SecurityHeadersCheck(BaseCheck):
         if missing:
             return {
                 "passed": False,
-                "details": {
-                    "missing_headers": missing
-                }
+                "details": {"missing_headers": missing},
             }
 
         return {
             "passed": True,
-            "details": {
-                "message": "All required security headers present"
-            }
+            "details": {"message": "All required security headers present"},
         }
