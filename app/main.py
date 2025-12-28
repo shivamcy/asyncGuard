@@ -8,6 +8,16 @@ from app.api import apis
 from app.api import user
 #from app.api import audits
 from app.api import reports
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+from app.config.limiter import limiter
+
+<<<<<<< HEAD
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+=======
+
+>>>>>>> temp-fix
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -23,7 +33,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
     #  Routers 
     app.include_router(auth.router)
     app.include_router(organizations.router)
