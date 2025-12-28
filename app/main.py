@@ -12,13 +12,6 @@ from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
 from app.config.limiter import limiter
 
-<<<<<<< HEAD
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-=======
-
->>>>>>> temp-fix
-
 def create_app() -> FastAPI:
     app = FastAPI(
         title="asyncGuard",
