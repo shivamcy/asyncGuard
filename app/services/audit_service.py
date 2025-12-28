@@ -31,58 +31,58 @@ class AuditService:
         await AuditRunner.run(api, audit_run, db)
 
         return audit_run
-    @staticmethod
-    async def get_audit_results(api_id: int, user: User, db: AsyncSession):
-        api = await db.get(ApiEndpoints, api_id)
-        if not api:
-            raise HTTPException(
-                detail = "API not found",
-                status_code=status.HTTP_404_NOT_FOUND
-            )
+    # @staticmethod
+    # async def get_audit_results(api_id: int, user: User, db: AsyncSession):
+    #     api = await db.get(ApiEndpoints, api_id)
+    #     if not api:
+    #         raise HTTPException(
+    #             detail = "API not found",
+    #             status_code=status.HTTP_404_NOT_FOUND
+    #         )
 
-        results = await db.execute(
-            select(AuditRun).where(AuditRun.api_id == api_id).order_by(AuditRun.time_window.desc())
-        )
-        audits = results.scalars().all()
+    #     results = await db.execute(
+    #         select(AuditRun).where(AuditRun.api_id == api_id).order_by(AuditRun.time_window.desc())
+    #     )
+    #     audits = results.scalars().all()
 
-        return {
-            "api_id": api_id,"latest_audits": audits[0] if audits else None
-        }
+    #     return {
+    #         "api_id": api_id,"latest_audits": audits[0] if audits else None
+    #     }
     
-    @staticmethod
-    async def get_all_latest_audit_results(user: User, db: AsyncSession):
-        if user.org_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User does not belong to any organization"
-            )
+    # @staticmethod
+    # async def get_all_latest_audit_results(user: User, db: AsyncSession):
+    #     if user.org_id is None:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_400_BAD_REQUEST,
+    #             detail="User does not belong to any organization"
+    #         )
 
-        apis = (
-            await db.execute(
-                select(ApiEndpoints).where(ApiEndpoints.org_id == user.org_id)
-            )
-        ).scalars().all()
+    #     apis = (
+    #         await db.execute(
+    #             select(ApiEndpoints).where(ApiEndpoints.org_id == user.org_id)
+    #         )
+    #     ).scalars().all()
 
-        response = []
+    #     response = []
 
-        for api in apis:
-            audit = (
-                await db.execute(
-                    select(AuditRun)
-                    .where(AuditRun.api_id == api.id)
-                    .order_by(AuditRun.time_window.desc())
-                    .limit(1)
-                )
-            ).scalar_one_or_none()
+    #     for api in apis:
+    #         audit = (
+    #             await db.execute(
+    #                 select(AuditRun)
+    #                 .where(AuditRun.api_id == api.id)
+    #                 .order_by(AuditRun.time_window.desc())
+    #                 .limit(1)
+    #             )
+    #         ).scalar_one_or_none()
 
-            response.append({
-                "api": {
-                    "id": api.id,
-                    "name": api.name,
-                    "url": api.url
-                },
-                "latest_audit": audit
-            })
+    #         response.append({
+    #             "api": {
+    #                 "id": api.id,
+    #                 "name": api.name,
+    #                 "url": api.url
+    #             },
+    #             "latest_audit": audit
+    #         })
 
-        return response
+    #     return response
 
