@@ -6,7 +6,7 @@ from app.audit.checks.input_validation import InputValidationCheck
 from app.audit.checks.rbac import RBACCheck
 from app.audit.checks.http import HTTPMethodRestrictionCheck
 from app.audit.checks.header_leakage import SensitiveHeaderLeakageCheck
-from app.audit.checks.idempotency import IdempotencyCheck
+from app.audit.checks.idempotency import IdempotencySafetyCheck
 from app.audit.checks.errors import ErrorHandlingConsistencyCheck
 
 CHECK_REGISTRY = [
@@ -18,6 +18,6 @@ CHECK_REGISTRY = [
     RBACCheck(),
     HTTPMethodRestrictionCheck(),
     SensitiveHeaderLeakageCheck(),
-    IdempotencyCheck(),
+    IdempotencySafetyCheck(),
     ErrorHandlingConsistencyCheck(),
 ]
