@@ -32,7 +32,7 @@ export default function LoginPage() {
   // }
 
   try {
-    const res = await fetch("http://localhost:8000/auth/login", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
       method: "POST",
       credentials: "include", // 🔥 critical (cookie auth)
       headers: {
