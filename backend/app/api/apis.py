@@ -26,3 +26,7 @@ async def delete_api(request: Request, api_id:int, db:AsyncSession=Depends(get_d
 async def list_apis(request: Request, db:AsyncSession=Depends(get_db), user : User =Depends(get_current_user)):
     return await ApiService.list_apis(db, user)
 
+@router.get("/error/{api_id}")
+@limiter.limit("20/minute", key_func=lambda request: str(request.state.user.id))
+async def list_error(api_id: int,request: Request,db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+    return await ApiService.list_error(api_id, db, user)

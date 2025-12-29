@@ -1,10 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select , desc
 from fastapi import HTTPException, status, Response
 
 from app.schemas.api import ApiRequestModel, ApiResponseModel, DeleteApiResponseModel
 from app.models.user import User, UserRole
 from app.models.api_endpoint import ApiEndpoints
+from app.models.audit_run import AuditRun
+from app.models.audit_result import AuditResult
 
 class ApiService:
     @staticmethod
@@ -72,4 +74,34 @@ class ApiService:
                 created_at=api.created_at
             ) for api in apis
         ]
+    @staticmethod
+    async def list_error(api_id: int, db: AsyncSession, user: User):
+
         
+        api_stmt = select(ApiEndpoints).where(ApiEndpoints.id == api_id,ApiEndpoints.org_id == user.org_id)
+
+        api = (await db.execute(api_stmt)).scalar_one_or_none()
+
+        if not api:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="API not found or access denied")
+
+        
+        audit_run_stmt = (select(AuditRun).where(AuditRun.api_id == api_id).order_by(desc(AuditRun.created_at)).limit(1))
+
+        audit_run = (await db.execute(audit_run_stmt)).scalar_one_or_none()
+
+        if not audit_run:
+            return {
+                "api_id": api_id,
+                "results": []
+            }
+
+        
+        audit_results_stmt = (select(AuditResult.details).where(AuditResult.audit_run_id == audit_run.id))
+
+        details = (await db.execute(audit_results_stmt)).scalars().all()
+
+        return {
+          "api_id": api_id,
+          "results": [{"details": d} for d in details]
+        }   
