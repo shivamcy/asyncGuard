@@ -88,7 +88,7 @@ class OrgService:
             "message": "Left the organization successfully"
         }
     @staticmethod
-    async def remove_user_from_org(data:RemoveUserFromOrgResponseModel , admin_user : User, db:AsyncSession):
+    async def remove_user_from_org(data:RemoveUserFromOrgRequestModel , admin_user : User, db:AsyncSession):
         if admin_user.role != UserRole.admin:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Only admins can remove users from the organization")
         result = await db.execute(select(User).where(User.id==data.user_id , User.org_id==admin_user.org_id))
@@ -98,7 +98,7 @@ class OrgService:
         user_to_remove.org_id = None
         user_to_remove.role = UserRole.viewer
         await db.commit()
-        return RemoveUserFromOrgRequestModel(
+        return RemoveUserFromOrgResponseModel(
             message="User removed from organization successfully",
             user_email=user_to_remove.email,
             admin_email=admin_user.email

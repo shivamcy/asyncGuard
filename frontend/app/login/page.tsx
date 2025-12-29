@@ -18,40 +18,55 @@ export default function LoginPage() {
     /[0-9]/.test(password) &&
     /[^A-Za-z0-9]/.test(password);
 
-  const handleLogin = async () => {
-  setError("");
-
-  if (!validateEmail(email)) {
-    setError("Invalid email address");
-    return;
-  }
-
-  // if (!validatePassword(password)) {
-  //   setError("Weak password");
-  //   return;
-  // }
-
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
-      method: "POST",
-      credentials: "include", // 🔥 critical (cookie auth)
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.detail || "Login failed");
-    }
-
-    // Login success → go to dashboard later
-    window.location.href = "/";
-  } catch (err: any) {
-    setError(err.message);
-  }
-};
+    const handleLogin = async () => {
+      setError("");
+    
+      if (!validateEmail(email)) {
+        setError("Invalid email address");
+        return;
+      }
+    
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          }
+        );
+    
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.detail || "Login failed");
+        }
+    
+        const meRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`,
+          {
+            credentials: "include",
+          }
+        );
+    
+        if (!meRes.ok) {
+          throw new Error("Failed to fetch user state");
+        }
+    
+        const user = await meRes.json();
+    
+        if (user.org_id === null) {
+          window.location.href = "/org/onboarding";
+        } else {
+          window.location.href = "/dashboard";
+        }
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+    
 
 
   return (

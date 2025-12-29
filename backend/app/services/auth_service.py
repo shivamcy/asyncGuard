@@ -74,6 +74,15 @@ class AuthService:
         set_auth_cookie(response, token)
 
         return {"message": "Logged in successfully"}
+    
+    @staticmethod
+    async def me(user: User) -> dict:
+        return {
+            "id": user.id,
+            "email": user.email,
+            "role": user.role.value,
+            "org_id": user.org_id,
+        }
 
     @staticmethod
     async def logout(response: Response) -> dict:
