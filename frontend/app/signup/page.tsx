@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -9,37 +8,40 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const validateEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  const validatePassword = (password: string) =>
-    password.length >= 8 &&
-    /[A-Z]/.test(password) &&
-    /[a-z]/.test(password) &&
-    /[0-9]/.test(password) &&
-    /[^A-Za-z0-9]/.test(password);
-
-  const handleSignup = () => {
-    if (!validateEmail(email)) {
-      setError("Invalid email address");
-      return;
-    }
-
-    if (!validatePassword(password)) {
-      setError(
-        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character"
-      );
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
+  const handleSignup = async () => {
     setError("");
-    console.log("Signup valid");
+    setSuccess("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:8000/auth/signup", {
+        method: "POST",
+        credentials: "include", // cookie-based auth
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // IMPORTANT: backend expects ONLY { email, password }
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.detail || "Signup failed");
+      }
+
+      // Success UX (no redirect forced)
+      setSuccess("Signup successful. You can now log in.");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,7 +54,7 @@ export default function SignupPage() {
         <div className="hud-bar">
           <Link href="/">Home</Link>
           <div className="icons auth-links">
-          <Link href="/login">[Login]</Link>
+            <Link href="/login">[Login]</Link>
           </div>
         </div>
 
@@ -68,6 +70,7 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="user@example.com"
+              disabled={loading}
             />
           </div>
 
@@ -78,6 +81,7 @@ export default function SignupPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              disabled={loading}
             />
           </div>
 
@@ -88,14 +92,19 @@ export default function SignupPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="••••••••"
+              disabled={loading}
             />
           </div>
         </div>
 
-        {/* START Button */}
+        {/* Button */}
         <div className="start-wrapper">
-          <button onClick={handleSignup}>Signup</button>
+          <button onClick={handleSignup} disabled={loading}>
+            {loading ? "CREATING ACCOUNT" : "SIGNUP"}
+          </button>
+
           {error && <div className="error-text">{error}</div>}
+          {success && <div className="success-text">{success}</div>}
         </div>
       </main>
     </>
