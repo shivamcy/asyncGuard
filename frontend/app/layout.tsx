@@ -1,8 +1,8 @@
 import "./global.css";
 
 export const metadata = {
-  title: "CHECKPOINT 2025",
-  description: "Look back at your 2025",
+  title: "asyncGuard",
+  description: "Audit you APIs with ease",
 };
 
 export default function RootLayout({

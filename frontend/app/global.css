@@ -16,3 +16,88 @@ body {
   align-items: center;
   overflow: hidden;
 }
+
+.hud-bar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* ---------- INPUT FIELDS ---------- */
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.3rem;
+}
+
+.stat-label {
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  color: #b6ff00;
+  opacity: 0.9;
+}
+
+.stat-box input {
+  padding: 0.9rem 1rem;
+  background: rgba(18, 18, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #eaeaea;
+  font-size: 1rem;
+  border-radius: 4px;
+  outline: none;
+
+  box-shadow:
+    inset 0 0 1px rgba(255, 255, 255, 0.15),
+    0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.stat-box input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.stat-box input:focus {
+  border-color: #b6ff00;
+  box-shadow:
+    inset 0 0 2px rgba(182, 255, 0, 0.6),
+    0 0 12px rgba(182, 255, 0, 0.25);
+}
+
+/* ---------- START BUTTON ---------- */
+
+.start-wrapper {
+  text-align: center;
+  margin-top: 1.8rem;
+}
+
+button {
+  background: transparent;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  padding: 0.9rem 3.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+
+button:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* ---------- ERROR ---------- */
+
+.error-text {
+  margin-top: 0.9rem;
+  color: #ff4d4d;
+  font-size: 0.75rem;
+}
