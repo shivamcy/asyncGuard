@@ -13,7 +13,7 @@ export default function JoinOrgPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/organizations/join", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/organizations/join`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -28,7 +28,7 @@ export default function JoinOrgPage() {
       }
 
       // re-check auth state
-      const meRes = await fetch("http://localhost:8000/auth/me", {
+      const meRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
         credentials: "include",
       });
 

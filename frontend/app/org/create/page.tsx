@@ -13,7 +13,7 @@ export default function CreateOrgPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/organizations/create", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/organizations/create`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -26,7 +26,7 @@ export default function CreateOrgPage() {
       }
 
       // re-check auth state
-      const meRes = await fetch("http://localhost:8000/auth/me", {
+      const meRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
         credentials: "include",
       });
 

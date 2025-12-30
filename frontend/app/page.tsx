@@ -2,7 +2,14 @@ import Link from "next/link";
 import { fetchOverviewStats } from "../features/stats/stats.api";
 
 export default async function HomePage() {
-    const stats = await fetchOverviewStats();
+  const stats = await fetchOverviewStats();
+  
+  // If stats is null, the backend is down
+  const isBackendDown = !stats;
+
+  // Default values to render if down
+  const safeStats = stats || { apis_registered: 0, audits_performed: 0 };
+
   return (
     <>
       <div className="scanline-bg" />
@@ -24,12 +31,16 @@ export default async function HomePage() {
         {/* Stats Section */}
         <div className="stats">
           <div className="stat-box">
-            <span className="stat-number">{stats.apis_registered}</span>
+            <span className="stat-number" style={{ color: isBackendDown ? '#ff4d4d' : undefined }}>
+              {isBackendDown ? "SERVER UNREACHABLE" : safeStats.apis_registered}
+            </span>
             <span className="stat-label">APIs Registered</span>
           </div>
 
           <div className="stat-box">
-            <span className="stat-number">{stats.audits_performed}</span>
+            <span className="stat-number" style={{ color: isBackendDown ? '#ff4d4d' : undefined }}>
+              {isBackendDown ? "SERVER UNREACHABLE" : safeStats.audits_performed}
+            </span>
             <span className="stat-label">Audits Performed</span>
           </div>
         </div>

@@ -149,7 +149,18 @@ export default function DashboardPage() {
     } catch (err: any) { alert(err.message); } finally { setActionLoading(false); }
   };
 
-  const handleLogout = async () => { await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, { method: "POST", credentials: "include" }); window.location.href = "/login"; };
+  const handleLogout = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, { 
+        method: "POST", 
+        credentials: "include" 
+      });
+    } catch (err) {
+      console.warn("Logout API call failed, forcing client-side logout anyway.", err);
+    } finally {
+      window.location.href = "/login";
+    }
+  };
   
   const confirmDeleteOrg = async () => {
     setActionLoading(true);
