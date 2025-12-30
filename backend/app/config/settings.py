@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from functools import cached_property
 
 
 class Settings(BaseSettings):
@@ -20,6 +21,10 @@ class Settings(BaseSettings):
 
     REDIS_HOST: str
     REDIS_PORT: int
+    
+    @cached_property
+    def REDIS_URL(self) -> str:
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
 
     CELERY_BROKER_URL: str
     CELERY_RESULT_BACKEND: str

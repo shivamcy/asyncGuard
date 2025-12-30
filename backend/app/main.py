@@ -9,6 +9,7 @@ from app.api import user
 #from app.api import audits
 from app.api import reports
 from app.api import stats
+from app.api import health
 from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
 from app.config.limiter import limiter
@@ -41,11 +42,8 @@ def create_app() -> FastAPI:
    # app.include_router(audits.router)
     app.include_router(reports.router)
     app.include_router(stats.router)
+    app.include_router(health.router)
 
-    # Health Check 
-    @app.get("/health", tags=["Health"])
-    async def health_check():
-        return {"status": "ok"}
 
     return app
 app = create_app()
