@@ -42,7 +42,7 @@ Misconfigurations are a leading cause of security breaches. asyncGuard provides 
 
 The system is containerized using **Docker** for consistent deployment.
 
-* **Frontend:** Next.js 16 (React) + Tailwind CSS
+* **Frontend:** Next.js 16 (React)
 * **Backend:** FastAPI (Python)
 * **Database:** PostgreSQL (Async + Sync drivers)
 * **Task Queue:** Celery + Redis
